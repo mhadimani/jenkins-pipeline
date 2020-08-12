@@ -1,0 +1,81 @@
+{
+    "pipeline_test": {
+        "platform": "linux",
+        "agent": "",
+        "startParallelAfterStage": 3,
+        "parallelFailEarly": true,
+        "docker": {
+            "dockerServer": "tcp://127.0.0.1:4243",
+            "dockerServerCreds": "",
+            "dockerRegistry": "",
+            "dockerRegistryCreds": "",
+            "image": "node:7-alpine",
+            "args": ""
+        },
+        "properties": {
+            "schedule": "H 23 * * *",
+            "poll": "H 23 * * *",
+            "cleanWorkspace": true,
+            "parameters": [
+                "VAR1:STRING:test",
+                "VAR2:BOOLEAN:false"
+            ]
+        },
+        "environment": {
+            "http_proxy": "<HOST>:<PORT>",
+            "https_proxy": "<HOST>:<PORT>"
+        },
+        "mail": {
+            "from": "example@gmail.com",
+            "to": "example@gmail.com"
+        },
+        "stages": {
+            "checkout": {
+                "scm": "git",
+                "repo": "",
+                "branch": "master",
+                "custom": "",
+                "refSpec": "",
+                "sparseCheckoutPath": [],
+                "credsId": ""
+            },
+            "build": {
+                "script": [
+                    "WORKSPACE/build.sh"
+                ]
+            },
+            "publish artifacts": {
+                "server": "<ARTIFACTORY_URL>",
+                "credsId": "",
+                "filePattern": "*.jar",
+                "targetPath": "test_Repository",
+                "bypassProxy": true
+            },
+            "unit tests": {
+                "parallel": true,
+                "script": [
+                    "mvn clean install"
+                ]
+            },
+            "automation tests": {
+                "parallel": true,
+                "script": [
+                    "mvn clean install"
+                ]
+            },
+            "publish reports": [
+                {
+                    "reportDir": "target/surefire-reports",
+                    "reportFiles": "index.html",
+                    "reportName": "Reports-Surefire"
+                },
+                {
+                    "reportDir": "target/surefire-reports",
+                    "reportFiles": "index.html",
+                    "reportName": "Surefire-Reports"
+                }
+            ]
+        },
+        "active": true
+    }
+}
